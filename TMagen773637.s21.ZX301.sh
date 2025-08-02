@@ -88,12 +88,7 @@ START()
         # Set the path for the main results directory
         main_dir=$(pwd)/remote_control_results
         mkdir -p "$main_dir" > /dev/null 2>&1
-
-        # Create a subdirectory named with the timestamp
         cd "$main_dir"
-        working_dir="$(pwd)/$timestamp"
-        mkdir -p "$working_dir"
-        cd "$working_dir"
 
         # Display the current working directory
         echo -e "\e[30m\e[107mCurrent working directory: $(pwd)\e[0m\n"
