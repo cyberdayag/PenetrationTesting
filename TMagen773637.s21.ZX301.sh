@@ -21,6 +21,7 @@ nipe_path=""
 real_ip=""
 real_country=""
 main_dir=""
+base_dir=""
 working_dir=""
 timestamp=""
 password=""
@@ -86,8 +87,7 @@ START()
         echo -e "\nOleksandr Shevchuk S21, TMagen773637, Erel Regev\n"
 
         # Set the path for the main results directory
-        main_dir=$(pwd)/remote_control_results
-        mkdir -p "$main_dir" > /dev/null 2>&1
+        main_dir=$(pwd)
         cd "$main_dir"
 
         # Display the current working directory
