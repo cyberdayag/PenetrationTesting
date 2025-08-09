@@ -147,7 +147,7 @@ CHECK_INTERNET_CONNECTION()
 CHECK_APP()
 {
     # Define a list of required utilities
-    local utilities_for_check="curl exploitdb ftp hydra jq medusa nmap perl rdesktop ssh sshpass telnet tor whois xsltproc"
+    local utilities_for_check=" aria2 curl exploitdb ftp hydra jq medusa nmap perl rdesktop ssh sshpass telnet tor whois xsltproc"
 
     # Iterate through each utility in the list
     for i in $utilities_for_check; do
