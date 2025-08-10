@@ -12,7 +12,7 @@ SELECT_SCAN_METOD() {
     read -p $'\e[31m[!]\e[0m\e[34m Enter network address/mask (CIDR), e.g., 192.168.0.0/24: \e[0m' network
 
     if [[ ! "$network" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/[0-9]+$ ]]; then
-        echo -e "\e[91m\e[107m[!] Wrong format. Example: 192.168.0.0/24\e[0m\n"
+        echo -e "\e[91m[!] Wrong format. Example: 192.168.0.0/24\e[0m\n"
         SELECT_SCAN_METOD    
     fi
 
@@ -25,7 +25,7 @@ SELECT_SCAN_METOD() {
     elif [[ "$scan_mode_raw" =~ ^[Ff]$ ]]; then
         scan_mode="Full"
     else
-        echo -e "\e[91m\e[107m[!]Wrong choice. Example: B or F\e[0m\n"
+        echo -e "\e[91m[!]Wrong choice. Example: B or F\e[0m\n"
         return
     fi
 
@@ -36,8 +36,8 @@ SELECT_SCAN_METOD() {
     echo -e "\n\e[31m[*]\e[0m\e[32m Please verify the entered data:\e[0m"
     echo ""
     echo -e "    Target network : $network"
-    echo -e "    Output folder  : $working_dir"
     echo -e "    Scan mode      : $scan_mode"
+    echo -e "    Output folder  : $working_dir"
 
     read -p $'\n\e[31m[!]\e[0m\e[34m Is everything correct? (y/n): \e[0m' validation
 
@@ -108,9 +108,25 @@ FULL_SCAN()
         mkdir -p "$i"
 
         # Run nmap scan with service/version detection and OS detection, output XML to the IP directory
-        nmap -Pn -sC -sS -sU --top-port 10 -sV -O "$i" -oX "./$i/res_${i}.xml" -oN ./$i/res_${i}.txt > /dev/null 2>&1
+        nmap -Pn -sC -sS -sU --top-ports 10 -sV -O "$i" -oX "./$i/res_${i}.xml" -oN ./$i/res_${i}.txt > /dev/null 2>&1
         # Convert the XML output to a human-readable HTML report in the same directory
         xsltproc "./$i/res_${i}.xml" -o "./$i/res_${i}.html"
+
+        echo -e "\e[31m[*]\e[0m\e[32m Mapping for: $i\e[0m"
+        
+        # Extract open ports (excluding "open|filtered") from the previous scan output
+        ports=$(grep -iw "open" "./$i/res_${i}.txt" | grep -v "open|filtered" | awk -F '/' '{print $1}' | sort -n | tr '\n' ',' | sed 's/,$//')
+
+        if [ -n "$ports" ]; then
+            # If open ports exist, run nmap vuln scripts on those ports and save output XML in the respective IP directory
+            nmap -p"$ports" --script vuln "$i" -oX "./$i/mapping_${i}.xml" > /dev/null 2>&1
+             
+            # Convert the XML vuln scan results into a human-readable HTML report in the same directory
+            xsltproc "./$i/mapping_${i}.xml" -o "./$i/mapping_${i}.html" > /dev/null 2>&1
+        else
+            # If no open ports are found, skip the vuln scan and print a warning message
+            echo -e "\e[33m[!] No open ports found for $i, skipping vuln scan\e[0m"
+        fi
     done
     CONFIGURE_WORDLISTS
 }
@@ -133,7 +149,7 @@ CONFIGURE_WORDLISTS() {
         'https://docs.google.com/uc?export=download&id=1mPSHpfd-P35FNv4r4nQVxfJmAesVLER_' > /dev/null 2>&1
 
     # Prompt the user to choose between standard or custom password list
-    read -p $'\e[31m[?]\e[0m\e[34m Choose password list: [S]tandard or [C]ustom: \e[0m' passwd_lst_raw
+    read -p $'\n\e[31m[?]\e[0m\e[34m Choose password list: [S]tandard or [C]ustom: \e[0m' passwd_lst_raw
 
     if [[ "$passwd_lst_raw" =~ ^[Ss]$ ]]; then
         # Download the standard passwords list silently using aria2c
