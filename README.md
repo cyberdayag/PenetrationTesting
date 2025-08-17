@@ -12,7 +12,7 @@ This script automates a penetration testing workflow:
 
 - Checks and installs required utilities.
 - Masks MAC and IP (via Nipe/TOR) and verifies anonymity.
-- Allows user input: target network, scan mode (Basic/Full), output folder.
+- Takes user input: target network, scan mode (Basic/Full), output folder.
 - Performs TCP/UDP scans, service detection, NSE scripts (Full mode), and weak password checks (SSH, FTP, Telnet, RDP).
 - Logs and organizes results in structured folders.
 - Optionally compresses results into a ZIP file.
@@ -35,7 +35,7 @@ This script automates a penetration testing workflow:
 ## Directory Structure
 
 ``` bash
-user folder (scan results)/
+output folder (scan results)/
 ├── 192.168.xx.xx/
 │   ├── nmap_ftp_brute_*.txt
 │   ├── nmap_ssh_brute_*.txt
@@ -65,15 +65,17 @@ git clone https://github.com/cyberdayag/PenetrationTesting.git
 
 ## Usage
 
-**Run the script in your terminal:**
+**Run the script as root in your terminal:**
 
 ```bash
 cd PenetrationTesting
 chmod +x TMagen773637.s21.ZX301.sh
-sudo ./TMagen773637.s21.ZX301.sh
+./TMagen773637.s21.ZX301.sh
 ```
 
-#### Follow the prompts to:
+#### Follow the prompts:
+
+- You **must run this script as root**
 - Enter the target network (CIDR notation, e.g., 192.168.29.0/24)
 - Choose scan mode (Basic/Full)
 - Enter the output folder name
